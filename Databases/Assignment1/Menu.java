@@ -74,6 +74,7 @@ public class Menu {
               RandomAccessFile data = new RandomAccessFile(dataFile, "rw");
               RandomAccessFile config = new RandomAccessFile(configFile, "rw");
               RandomAccessFile overflow = new RandomAccessFile(overflowFile, "rw");
+              b.open(rawFile);
               
               int rowCount = 0;
               int recordNum = 1;
