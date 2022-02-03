@@ -1,0 +1,137 @@
+<!-- 
+Robert  Goss 
+Assignment 6
+11/9/2021
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Robert Goss's page</title>
+    </head>
+
+    <body style="background-color:lightcyan;">
+        <h1>Robert Goss's Page</h1>
+        <p>Canada is one of the largest countries by land, and holds more lakes than any country in the world!<br>
+            Many people just know the famous cities in Canada, but the country has a wide range of geography and culture.<br>
+            The following webpage contains a variety of information about the different regions of Canada.</p>
+        <a href="https://thecanadaguide.com/places/geography/" target="_blank">Click here to learn more!</a><br>
+        <h3 style="color:BlueViolet">Take a quiz here!</h3>
+        
+        <div id="question1">
+            <h4>The West Coast of Canada, is known by geographers as the _____ region.</h4>
+            <input type="radio" name="q1" id="lowland"/>
+            <label for="lowland">Lowland</label><br>
+            <input type="radio" name="q1" id="rocky"/>
+            <label for="rocky">Rocky</label><br>
+            <input type="radio" name="q1" id="cordillera"/>
+            <label for="cordillera">Cordillera</label><br>
+            <input type="radio" name="q1" id="swamp"/>
+            <label for="swamp">Swampy</label><br><br>
+            <text id="check1" hidden="hidden" />
+        </div>
+
+        <div id="question2">
+            <h4>The country’s two largest provinces, _____ and _____, are part of a massive geographic land form known as the Canadian Shield.</h4>
+            <input type="radio" name="q2" id="pei"/>
+            <label for="pei">  Prince Edward Island and Newfoundland</label><br>
+            <input type="radio" name="q2" id="bc"/> 
+            <label for="bc"> Ontario and British Columbia</label><br>
+            <input type="radio" name="q2" id="manitoba"/>
+            <label for="manitoba"> Quebec and Manitoba</label><br>
+            <input type="radio" name="q2" id="ontario"/>
+            <label for="ontario"> Ontario and Quebec</label><br><br>
+            <text id="check2" hidden="hidden"></text><br>
+        </div>
+
+        <div id="question3">
+            <h4>What is the current Canadian flag?</h4>
+            <input id="canada" type="radio" name="q3"/>
+            <label for="canada"><image src="ca-flag.jpg" width="250" height="150"/></label><br>
+            <input id="japan" type="radio" name="q3"/>
+            <label for="japan"><image src="japan.png" width="250" height="150"/></label><br>
+            <input id="peru" type="radio" name="q3"/>
+            <label for="peru"><image src="peru.jpg" width="250" height="150"/></label><br>
+            <input id="america" type="radio" name="q3"/>
+            <label for="america"><image id="America" src="us.png" width="250" height="150"/></label><br><br>
+            <text id="check3" hidden="hidden"></text><br>
+        </div>
+
+        <div id="resetbutton">
+            <button type="button" id="reset">Reset</button><br><br>
+        </div>
+        
+    </body>
+
+
+    <script>
+        document.getElementById("question1").onclick = () => {
+            if(document.getElementById("cordillera").checked)
+            {
+                document.getElementById("check1").style.display = "block";
+                document.getElementById("check1").style.color = "green";
+                document.getElementById("check1").innerHTML = "That is correct!";   
+            }
+            if(document.getElementById("swamp").checked || document.getElementById("lowland").checked || document.getElementById("rocky").checked)
+            {
+                document.getElementById("check1").style.display = "block";
+                document.getElementById("check1").style.color = "red";
+                document.getElementById("check1").innerHTML = "Sorry, that is incorrect.";
+            }
+        };
+
+        document.getElementById("question2").onclick = () => {
+            if(document.getElementById("ontario").checked)
+            {
+                document.getElementById("check2").style.display = "block";
+                document.getElementById("check2").style.color = "green";
+                document.getElementById("check2").innerHTML = "That is correct!";   
+            }
+            if(document.getElementById("pei").checked || document.getElementById("bc").checked || document.getElementById("manitoba").checked)
+            {
+                document.getElementById("check2").style.display = "block";
+                document.getElementById("check2").style.color = "red";
+                document.getElementById("check2").innerHTML = "Sorry, that is incorrect.";
+            }
+        };
+
+        document.getElementById("question3").onclick = () => {
+            if(document.getElementById("canada").checked)
+            {
+                document.getElementById("check3").style.display = "block";
+                document.getElementById("check3").style.color = "green";
+                document.getElementById("check3").innerHTML = "That is correct!";   
+            }
+            if(document.getElementById("peru").checked || document.getElementById("japan").checked || document.getElementById("america").checked)
+            {
+                document.getElementById("check3").style.display = "block";
+                document.getElementById("check3").style.color = "red";
+                document.getElementById("check3").innerHTML = "Sorry, that is incorrect.";
+            }
+        };
+
+        document.getElementById("reset").onclick = () =>
+        {
+            clearBubble("lowland");
+            clearBubble("rocky");
+            clearBubble("cordillera");
+            clearBubble("swamp");
+            clearBubble("pei");
+            clearBubble("manitoba");
+            clearBubble("bc");
+            clearBubble("ontario");
+            clearBubble("canada");
+            clearBubble("america");
+            clearBubble("japan");
+            clearBubble("peru");
+            document.getElementById("check1").innerHTML = "";
+            document.getElementById("check2").innerHTML = "";
+            document.getElementById("check3").innerHTML = "";
+        };
+
+        const clearBubble = (bubbleName) => {
+            var button = document.getElementById(bubbleName);
+            button.checked = false;
+        }; 
+
+    </script>
+</html>

@@ -1,0 +1,137 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<style>
+		.toc {
+			margin-left: 30px;
+		}
+		.code {
+			margin-left: 30px;
+			color:#000000;
+			background-color:#ffffff;
+		}
+		.shell {
+			margin-left: 30px;
+			color:#000000;
+			background-color:#ffffff;
+		}
+	</style>
+</head>
+<body bgcolor="#edb6ca"><br><br>
+<table align="center" cellpadding="50" border="1" bgcolor="#fdc6da" width="720"><tbody><tr><td>
+
+<h1>Assignment 7 - Javascript</h1>
+
+<ol>
+	<li><b>Find a few tutorials on the web for learning Javascript.</b>
+		You don't have to read them.
+		Just make sure you know where you can go to learn what you need.
+		</li><br><br>
+
+	<li>Play around with <a href="turtle.html">this page</a>.
+		It uses Javascript to implement that turtle program that you made in assignment 2.
+		View the source of this page (Ctrl-U in most browsers).
+		<br><img src="turtle.png">&nbsp;&nbsp;&nbsp;&nbsp;<img src="lettuce.png"><br>
+		Study the code until you feel that you understand it reasonably well.
+		Add comments to the code to help organize your understanding.
+		<br><br>
+		Here are a few technical details worth noting:<br><br>
+		<ul>
+			<li>Javascript is a dynamically typed language.
+				It has no compiler to help you catch bugs.
+				There is, however, a pretty decent debugger built into your browser.
+				You will need to use it.
+			</li><br><br>
+			<li>The two lines that are not inside any function are executed immediately as the page is loaded into your browser.
+			</li><br><br>
+			<li>The <font color="green">getElementById</font> function returns an object that represents an element in the HTML DOM.
+				This script deliberately comes after the <font color="green">&lt;canvas&gt;</font> tag,
+				so the line <font color="green">document.getElementById("myCanvas");</font> will succeed at finding it.
+			</li><br><br>
+			<li>By convention, classes begin with a capital letter and methods begin with a lowercase letter.
+				In Javascript, as of ES6, there are classes, but you can also use functions to represent classes. <i>Feel free to skip to the next part if you're just going to use the class keyword... </i><br><br>
+				If you choose to use a function, you should capitalize the name to indicate it is intended to be called as a constructor.<br><br>
+				"prototype" is like a class object. All objects of a particular type refer to the same prototype object.
+				So, when you add a method to the prototype object, it becomes accessible by all objects of that type.
+				<br><br>
+				tl;dr:<br><br>
+				<font color="green">"function Model() {"</font> pretty much means <font color="green">"class Model {"</font>.<br><br>
+				<font color="green">"Model.prototype.update = function() {"</font> pretty much means <font color="green">"method update() {"</font>.
+			</li><br><br>
+			<li>The line, <font color="green">this.turtle.src = "turtle.png";</font> causes the browser to request the turtle.png image.
+				However, it make take some time before that image actually arrives.
+				Until then, the image will be blank.
+			</li><br><br>
+			<li>This code uses "closures" in the calls to <font color="green">addEventListener</font> and <font color="green">setInterval</font>.
+				Essentially, these calls expect simple functions, but we want to call class methods,
+				so we pass a wrapper function that calls the method.
+				These wrapper functions have access to the local variables because they retain a reference to
+				the current stack frame, which keeps it alive even after the outer function returns.
+			</li><br><br>
+		</ul>
+		</li><br><br>
+
+	<li><b>Port your implementation of assignment 5 to Javascript</b>.<br>
+		Your game should include all the major features of assignment 5, including Mario, Bricks, CoinBricks, Coins, and collision detection.
+		</li><br><br>
+
+	<li><b>Submit a zip file in the usual manner</b>
+		The zip file should contain your HTML file and image files. Test your zip file before you submit it by extracting into a separate folder and then opening your web page from that new folder. Ensure that it works (in Chrome) as expected, especially finding all images as necessary.
+	</li><br><br>
+</ol>
+
+
+
+
+<br><br><br><br><h2>General Rubric (subject to change as needed)</h2>
+	You should submit all necessary files through Blackboard in a zip file named "<b><font color="red">Assignment7.zip</font></b>".  You should test your submission by unzipping it in a different folder
+	to make sure that it still runs as expected with all needed files.  When the grader opens your file, they should find:
+	<ul>
+		<li>A web page containing a Mario game written in Javascript.</li>
+		<li>It should include a Mario, at least five bricks in testable positions, at least one of which should be a CoinBrick, and the ability to release coins from the CoinBricks.</li>
+		<li>When you press the arrow keys, the bricks should scroll. When you press space, Mario should jump.</li>
+		<li>Mario should be able to interact with the bricks as if they were solid objects.</li>
+		<li>Mario should be able to hit coin bricks from the bottom and have coins pop out of the bricks, which come out of the top of the brick and fall off the bottom of the screen</li>
+		<li>There should be a slower scrolling background image.</li>
+		<li>You do not need to include any edit capability; bricks can be hardcoded into your program instead of using a .json file</li>
+		<li>You do not need an iterator</li>
+	</ul>
+	If you meet these requirements and any others listed in the previous programming assignments, you should expect full credit (minus any late penalty).
+
+
+
+
+<br><br><br><br><h2>FAQ:</h2>
+<ol>
+	<li><b>Q: The page mentioned in step 2 doesn't work in my browser. What should I do?</b><br>
+		A: Do you have a really old browser? Try replacing all occurrences of "let" with "var". Does that fix it? If not, please update your browser.  If that still doesn't fix it, please contact me.
+		</li><br><br>
+
+	<li><b>Q: Would you please post all the information we will need about Javascript here, so we don't have to use a search engine?</b><br>
+		A: No.
+		</li><br><br>
+
+	<li><b>Q: Is there an ArrayList type in Javascript?</b><br>
+		A: No. Use an Array.
+		</li><br><br>
+
+	<li><b>Q: How would one remove the i<sup>th</sup> element from an array in Javascript?</b><br>
+		A: arr.splice(i, 1);
+		</li><br><br>
+
+	<li><b>Q: How do you detect right-click, since the browser intercepts right-clicks for its own purposes?</b><br>
+		A: See <a href="http://stackoverflow.com/questions/4235426/how-can-i-capture-the-right-click-event-in-javascript">this</a>.
+<pre class="code">
+view.canvas.addEventListener(
+		"contextmenu",
+		function(event) {
+			event.preventDefault();
+			self.onRightClick(event);
+			return false;
+		},
+		false
+	);
+</pre>
+		</li><br><br>
+</ol>
+		
+</td></tr></table>
+</body></html>
