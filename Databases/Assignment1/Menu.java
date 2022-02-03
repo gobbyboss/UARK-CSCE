@@ -40,6 +40,7 @@ public class Menu {
   //Prints out the options for the user to select and executes the function
   public static void menu()
   {
+    DB b = new DB();
     Scanner inputScanner = new Scanner(System.in);
     System.out.println("Please select an operation.\n1) Create new database \n2) Open database \n3) Close database\n9) Exit");
     System.out.print("Enter here: ");
@@ -52,8 +53,6 @@ public class Menu {
           System.out.println("Please select an operation.\n1) Create new database \n2) Open database \n3) Close database\n9) Exit");
           break;
         case "1":
-          DB b = new DB();
-
           System.out.print("Please enter a .csv file to create a new database: ");
           String csvFile = inputScanner.nextLine();
 
@@ -67,6 +66,8 @@ public class Menu {
 
           checkedFile = new File(dataFile);
           boolean databaseExists = checkedFile.exists();
+
+          //Checks if the .csv is valid and if the database doesn't already exist. If that is true, generates 
           if(csvExists && !databaseExists)
           {
             try{
@@ -78,25 +79,29 @@ public class Menu {
               
               int rowCount = 0;
               int recordNum = 1;
+
+              //Writes to the datafile
               for(int i = 0; i < DB.NUM_RECORDS; i++)
               {
                 String[] fieldData = readLine(csvFile, rowCount);
-                
-                try{
-                  long fileptr = data.getFilePointer();
-                  b.writeRecord(fileptr, recordNum, Integer.parseInt(fieldData[0]), fieldData[1], fieldData[2], fieldData[3]);
-                  recordNum++;
-                }
-                catch(IOException e){
-                  System.out.println(e.toString());
-                }
-  
+                b.writeRecord(recordNum, Integer.parseInt(fieldData[0]), fieldData[1], fieldData[2], fieldData[3]);
+                recordNum++;
                 rowCount++;
               }
+
+              //Writes metadata after generating .data file
+              String numRecordsString = "num_records=" + --recordNum + "\n";
+              String overflowString = "num_overflow=0";
+              byte[] bytesToWrite = numRecordsString.getBytes();
+              config.write(bytesToWrite);
+              bytesToWrite = overflowString.getBytes();
+              config.write(bytesToWrite);
               
               data.close();
               config.close();
               overflow.close();
+
+              System.out.println("Database created successfully!");
             }
             catch(FileNotFoundException e){
               System.out.println("File not found.");
@@ -119,8 +124,13 @@ public class Menu {
           }
           break;
         case "2":
+          System.out.print("Please enter the prefix of the database to open: ");
+          String filename = inputScanner.nextLine();
+          boolean success = b.open(filename);
+          if(success) System.out.println("Database opened successfully!");
           break;
         case "3":
+          b.close();
           break;
         case "9":
           System.out.println("Exiting now...");
