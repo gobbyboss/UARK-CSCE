@@ -1,7 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.File;
 
 public class DB {
   public static final int NUM_RECORDS = 10;
@@ -11,7 +10,6 @@ public class DB {
   private RandomAccessFile data;
   private RandomAccessFile overflow;
   private int num_records;
-  private int num_overflow;
   private Boolean isOpen;
 
   public DB() {
@@ -19,7 +17,6 @@ public class DB {
     this.data = null;
     this.overflow = null;
     this.num_records = 0;
-    this.num_overflow = 0;
     this.isOpen = false;
   }
 
@@ -35,11 +32,7 @@ public class DB {
     this.num_records = NUM_RECORDS;
     // Open file in read/write mode
     try {
-      String fileToCheck = filename + ".csv";
-      File checkedFile = new File(fileToCheck);
-    
-      boolean fileExists = checkedFile.exists();
-      if(!this.isOpen && fileExists)
+      if(!this.isOpen)
       {
         String dataFile = filename + ".data";
         String configFile = filename + ".config";
@@ -52,14 +45,7 @@ public class DB {
       }
       else
       {
-        if(!fileExists)
-        {
-          System.out.println("Sorry, that database was not found. Please try a new prefix");
-        }
-        else
-        {
-          System.out.println("A database is already open.");
-        }
+        System.out.println("A database is already open.");
         return false;
       }
     } catch (FileNotFoundException e) {
@@ -78,9 +64,6 @@ public class DB {
       this.data.close();
       this.overflow.close();
       this.isOpen = false;
-      this.num_records = 0;
-      this.num_overflow = 0;
-      System.out.println("Database closed successfully!");
     } catch (IOException e) {
       System.out.println("There was an error while attempting to close the database file.\n");
       e.printStackTrace();
@@ -121,14 +104,15 @@ public class DB {
   //   return record;
   // }
 
-  public Boolean writeRecord(int recordNum, int id, String state, String city, String name)
+  public Boolean writeRecord(long fileptr, int recordNum, int id, String state, String city, String name)
   {
     if(this.isOpen = true)
     {
       byte[] bytesToWrite = new byte[RECORD_SIZE];
-      String recordString = recordNum + "," + id + "," + state + "," + city + "," + name + "\n"; 
+      String recordString = fileptr + "," + recordNum + "," + id + "," + state + "," + city + "," + name + "\n"; 
+      bytesToWrite = recordString.getBytes();
       try{
-        bytesToWrite = recordString.getBytes();
+        // this.data.set
         this.data.write(bytesToWrite);
       }
       catch(IOException e)
