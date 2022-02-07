@@ -132,6 +132,14 @@ public class Menu {
         case "3":
           b.close();
           break;
+        case "4":
+          if(!b.isOpen())
+          {
+            System.out.println("A database is not open");
+            break;
+          }
+          
+          break;
         case "9":
           System.out.println("Exiting now...");
           System.exit(0);
