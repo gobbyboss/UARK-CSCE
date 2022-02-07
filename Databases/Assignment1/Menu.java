@@ -145,8 +145,7 @@ public class Menu {
           {
             System.out.println("A database is not open");
             break;
-          }
-          
+          }          
           break;
         case "9":
           System.out.println("Exiting now...");
