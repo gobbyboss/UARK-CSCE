@@ -40,7 +40,7 @@ public class DB {
     this.num_records = NUM_RECORDS;
     // Open file in read/write mode
     try {
-      String fileToCheck = filename + ".csv";
+      String fileToCheck = filename + ".data";
       File checkedFile = new File(fileToCheck);
     
       boolean fileExists = checkedFile.exists();
@@ -85,7 +85,6 @@ public class DB {
       this.isOpen = false;
       this.num_records = 0;
       this.num_overflow = 0;
-      System.out.println("Database closed successfully!");
     } catch (IOException e) {
       System.out.println("There was an error while attempting to close the database file.\n");
       e.printStackTrace();

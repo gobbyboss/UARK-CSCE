@@ -42,7 +42,8 @@ public class Menu {
   {
     DB b = new DB();
     Scanner inputScanner = new Scanner(System.in);
-    System.out.println("Please select an operation.\n1) Create new database \n2) Open database \n3) Close database\n9) Exit");
+    System.out.println("Please select an operation.\n\n1) Create new database \n2) Open database \n3) Close database\n" +
+    "4) Display records\n9) Exit\n");
     System.out.print("Enter here: ");
     String input = inputScanner.nextLine();
     while(input != "9")
@@ -50,12 +51,17 @@ public class Menu {
       switch(input) 
       {
         case "0":
-          System.out.println("Please select an operation.\n1) Create new database \n2) Open database \n3) Close database\n9) Exit");
+          System.out.println("Please select an operation.\n\n1) Create new database \n2) Open database \n3) Close database\n" +
+          "4) Display records\n9) Exit\n");
           break;
         case "1":
           System.out.print("Please enter a .csv file to create a new database: ");
           String csvFile = inputScanner.nextLine();
-
+          if(csvFile.length() < 4)
+          {
+            System.out.println("Sorry, that is an invalid file. Please try again.");
+            break;
+          }
           File checkedFile = new File(csvFile);
           boolean csvExists = checkedFile.exists();
 
@@ -100,6 +106,7 @@ public class Menu {
               data.close();
               config.close();
               overflow.close();
+              b.close();
 
               System.out.println("Database created successfully!");
             }
@@ -131,6 +138,7 @@ public class Menu {
           break;
         case "3":
           b.close();
+          System.out.println("Database closed successfully!");
           break;
         case "4":
           if(!b.isOpen())
