@@ -1,3 +1,4 @@
+//TODO: Write num_overflow on close, and fix adding to overflow.
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -62,6 +63,17 @@ public class DB {
         this.data = new RandomAccessFile(dataFile, "rw");
         this.overflow = new RandomAccessFile(overflowFile, "rw");
         this.isOpen = true;
+        try{
+         this.config.seek(0);
+         String[] overflowString = this.config.readLine().split("=", 1);
+         num_overflow = Integer.parseInt(overflowString[1]);
+        }
+        catch(IOException e)
+        {
+          System.out.println(e.toString());
+          return false;
+        }
+        
         return true;
       }
       else
@@ -88,6 +100,13 @@ public class DB {
    */
   public void close() {
     try {
+      num_records = NUM_RECORDS - 1;
+      String numRecordsString = "num_records=" + num_records;
+      String overflowString = "num_overflow=0\n";
+      byte[] bytesToWrite = overflowString.getBytes();
+      config.write(bytesToWrite);
+      bytesToWrite = numRecordsString.getBytes();
+      config.write(bytesToWrite);
       this.config.close();
       this.data.close();
       this.overflow.close();
@@ -142,6 +161,7 @@ public class DB {
 
     return true;
   }
+    
 
   //Writes a record to the end of the data file. Used for creating the DB
   public Boolean writeRecord(int recordNum, int id, String state, String city, String name)
@@ -293,6 +313,49 @@ public class DB {
     return true;
   }
 
+  public Boolean addRecord(int id, String state, String city, String name)
+  {
+    if(!this.isOpen)
+    {
+      return false;
+    }
+    try{
+      overflow.seek(num_overflow * RECORD_SIZE);
+    }
+    catch(IOException e)
+    {
+      System.out.println(e.toString());
+      return false;
+    }
+    byte[] bytesToWrite = new byte[RECORD_SIZE - 1];
+    int overflowNum = num_overflow + 1;
+    String recordString = overflowNum + "," + id + "," + state + "," + city + "," + name + ","; 
+    try{
+      byte[] recordBytes = recordString.getBytes("UTF8");
+      for(int i = 0; i < RECORD_SIZE; i++)
+      {
+        if(i < recordBytes.length)
+        {
+          bytesToWrite[i] = recordBytes[i];
+        }
+        if(i >= recordBytes.length && i < RECORD_SIZE - 1)
+        {
+          bytesToWrite[i] = ' ';
+        }
+      }
+      String newline = "\n";
+      byte[] newlineBytes = newline.getBytes();
+      overflow.write(bytesToWrite);
+      overflow.write(newlineBytes);
+      num_overflow++;
+    }
+    catch(IOException e)
+    {
+      System.out.print(e.toString());
+    }
+    return true;
+  }
+
   //Checks if its overwriting overflow or data file, then writes a new record at the old record location
   public Boolean overwriteRecord(String state, String city, String name)
   {
@@ -311,7 +374,6 @@ public class DB {
     {
       System.out.println(e.toString());
     }
-  
     byte[] bytesToWrite = new byte[RECORD_SIZE - 1];
     String recordString = this.tempRecordNum + "," + this.tempId + "," + state + "," + city + "," + name + ","; 
     try{

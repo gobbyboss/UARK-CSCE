@@ -98,11 +98,11 @@ public class Menu {
               }
 
               //Writes metadata after generating .data file
-              String numRecordsString = "num_records=" + --recordNum + "\n";
-              String overflowString = "num_overflow=0";
-              byte[] bytesToWrite = numRecordsString.getBytes();
+              String numRecordsString = "num_records=" + --recordNum;
+              String overflowString = "num_overflow=0\n";
+              byte[] bytesToWrite = overflowString.getBytes();
               config.write(bytesToWrite);
-              bytesToWrite = overflowString.getBytes();
+              bytesToWrite = numRecordsString.getBytes();
               config.write(bytesToWrite);
               
               data.close();
@@ -185,6 +185,36 @@ public class Menu {
           break;
         //Adds record
         case "7":
+          if(!b.isOpen())
+          {
+            System.out.println("A database isn't open. Please try again.");
+            break;
+          }
+          System.out.print("To add a new record, enter your data for each field prompted.\nID: ");
+          int addId;
+          String inputId, addState, addCity, addName;
+          
+          inputId = b.inputScanner.nextLine();
+          try{
+            addId = Integer.parseInt(inputId);
+          }catch(NumberFormatException e)
+          {
+            System.out.println("Not a valid input, please input an integer.");
+            break;
+          } 
+          System.out.print("\nState: ");
+          addState = b.inputScanner.nextLine();
+          System.out.print("\nCity: ");
+          addCity = b.inputScanner.nextLine();
+          System.out.print("\nName: ");
+          addName = b.inputScanner.nextLine();
+          boolean addSuccess = b.addRecord(addId, addState, addCity, addName);
+          if(!addSuccess)
+          {
+            System.out.println("Failed to add record");
+            break;
+          }
+          System.out.println("Successfully added record!");
           break;
         //Deletes record
         case "8":
