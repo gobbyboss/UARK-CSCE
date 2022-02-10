@@ -41,22 +41,24 @@ public class Menu {
   public static void menu()
   {
     DB b = new DB();
-    Scanner inputScanner = new Scanner(System.in);
+    
     System.out.println("Please select an operation.\n\n1) Create new database \n2) Open database \n3) Close database\n" +
-    "4) Display records\n9) Exit\n");
+    "4) Display record\n5) Update record\n6) Create report of first 10 records\n7) Add record\n8) Delete record\n9) Exit\n");
     System.out.print("Enter here: ");
-    String input = inputScanner.nextLine();
+    String input = b.inputScanner.nextLine();
     while(input != "9")
     {
       switch(input) 
       {
+        //Gives the user the options
         case "0":
           System.out.println("Please select an operation.\n\n1) Create new database \n2) Open database \n3) Close database\n" +
-          "4) Display records\n9) Exit\n");
+          "4) Display record\n5) Update record\n6) Create report of first 10 records\n7) Add record\n8) Delete record\n9) Exit\n");
           break;
+        //Creates the DB
         case "1":
           System.out.print("Please enter a .csv file to create a new database: ");
-          String csvFile = inputScanner.nextLine();
+          String csvFile = b.inputScanner.nextLine();
           if(csvFile.length() < 4)
           {
             System.out.println("Sorry, that is an invalid file. Please try again.");
@@ -108,10 +110,10 @@ public class Menu {
               overflow.close();
               b.close();
 
-              System.out.println("Database created successfully!");
+              System.out.println("Database created successfully!\n");
             }
             catch(FileNotFoundException e){
-              System.out.println("File not found.");
+              System.out.println("File not found.\n");
             }
             catch(IOException e)
             {
@@ -122,41 +124,82 @@ public class Menu {
           {
             if(!csvExists)
             {
-              System.out.println("The .csv file was not found.");
+              System.out.println("The .csv file was not found.\n");
             }
             if(databaseExists)
             {
-             System.out.println("This database already exists.");
+             System.out.println("This database already exists.\n");
             }
           }
           break;
+        //Opens the DB
         case "2":
           System.out.print("Please enter the prefix of the database to open: ");
-          String filename = inputScanner.nextLine();
+          String filename = b.inputScanner.nextLine();
           boolean success = b.open(filename);
-          if(success) System.out.println("Database opened successfully!");
+          if(success) System.out.println("Database opened successfully!\n");
           break;
+        //Closes the DB
         case "3":
+          boolean isOpened = b.isOpen();
+          if(!isOpened)
+          {
+            System.out.println("There are no active databases curerntly.\n");
+            break;
+          }
           b.close();
-          System.out.println("Database closed successfully!");
+          System.out.println("Database closed successfully!\n");
           break;
+        //Displays a record
         case "4":
           if(!b.isOpen())
           {
-            System.out.println("A database is not open");
+            System.out.println("A database is not open\n");
             break;
-          }          
+          }
+          System.out.print("Please input the ID of the record you would like to display: ");
+          String idInput = b.inputScanner.nextLine();
+          int searchId = 0;
+          try{
+            searchId = Integer.parseInt(idInput);
+          }catch(NumberFormatException e){
+            System.out.println("Sorry that is not a valid input\n");
+            break;
+          }
+          b.findRecord(searchId);
           break;
+        //Updates a record
+        case "5":
+          boolean updateSuccess = b.updateRecord();
+          if(updateSuccess)
+          {
+            System.out.println("\nSuccessfully updated record!");
+          } 
+          else
+          {
+            System.out.println("Record did not update successfully.\n");
+          }
+          break;
+        //Prints report
+        case "6":
+          break;
+        //Adds record
+        case "7":
+          break;
+        //Deletes record
+        case "8":
+          break;
+        //Exits
         case "9":
           System.out.println("Exiting now...");
+          b.inputScanner.close();
           System.exit(0);
         default:
           System.out.println("That is not a valid input. Please enter an integer between 1-9");
       }
       System.out.print("Please input a new operation or 0 to see the options again: ");
-      input = inputScanner.nextLine();
+      input = b.inputScanner.nextLine();
     }
-    inputScanner.close();
   }
 
   //Runs the menu 
