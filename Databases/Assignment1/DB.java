@@ -1,8 +1,9 @@
-//TODO: Write num_overflow on close, and fix adding to overflow.
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
+
+
 import java.io.File;
 
 public class DB {
@@ -11,6 +12,7 @@ public class DB {
   public int tempRecordNum, tempId;
   public String tempState, tempCity, tempName;
   public Scanner inputScanner;
+
 
   private RandomAccessFile config, data, overflow;
   private int num_records, num_overflow;
@@ -45,7 +47,7 @@ public class DB {
    * @param filename (e.g., input.txt)
    * @return status true if operation successful
    */
-  public boolean open(String filename) {
+  public boolean open(String filename, Boolean isConfigGenerated) {
     // Set the number of records
     this.num_records = NUM_RECORDS;
     // Open file in read/write mode
@@ -64,9 +66,16 @@ public class DB {
         this.overflow = new RandomAccessFile(overflowFile, "rw");
         this.isOpen = true;
         try{
-         this.config.seek(0);
-         String[] overflowString = this.config.readLine().split("=", 1);
-         num_overflow = Integer.parseInt(overflowString[1]);
+         if(isConfigGenerated)
+         {
+          this.config.seek(0);
+          String[] overflowString = this.config.readLine().split("=");
+          this.num_overflow = Integer.parseInt(overflowString[1]);
+         }
+         else
+         {
+           this.num_overflow = 0;
+         }
         }
         catch(IOException e)
         {
@@ -100,16 +109,21 @@ public class DB {
    */
   public void close() {
     try {
-      num_records = NUM_RECORDS - 1;
-      String numRecordsString = "num_records=" + num_records;
-      String overflowString = "num_overflow=0\n";
-      byte[] bytesToWrite = overflowString.getBytes();
-      config.write(bytesToWrite);
-      bytesToWrite = numRecordsString.getBytes();
-      config.write(bytesToWrite);
-      this.config.close();
-      this.data.close();
-      this.overflow.close();
+   
+      if(this.isOpen == true)
+      {
+        num_records = NUM_RECORDS - 1;
+        String numRecordsString = "num_records=" + num_records;
+        String overflowString = "num_overflow=" + this.num_overflow + "\n";
+        byte[] bytesToWrite = overflowString.getBytes();
+        config.seek(0);
+        config.write(bytesToWrite);
+        bytesToWrite = numRecordsString.getBytes();
+        config.write(bytesToWrite);
+        this.config.close();
+        this.data.close();
+        this.overflow.close();
+      }
       this.isOpen = false;
       this.num_records = 0;
       this.num_overflow = 0;
@@ -161,7 +175,13 @@ public class DB {
 
     return true;
   }
-    
+  
+
+  //Returns the name of the datafile open;
+  public String getDataFile()
+  {
+    return this.dataFile;
+  }
 
   //Writes a record to the end of the data file. Used for creating the DB
   public Boolean writeRecord(int recordNum, int id, String state, String city, String name)
@@ -207,17 +227,11 @@ public class DB {
     this.isOverflow = false;
     if(recordId == -1)
     {
-      byte[] isOverflowEmpty = this.overflowFile.getBytes();
-      //Checking if overflow is empty before searching, the number of bytes of an empty file is 20
-      if(isOverflowEmpty.length == 20)
-      {
-        System.out.println("\nRecord was not found.\n");
-        return false;
-      }
       boolean found = false;
-      if(num_overflow != 0)
+   
+      if(this.num_overflow != 0)
       {
-        for(int i = 0; i < num_overflow; i++)
+        for(int i = 0; i < this.num_overflow; i++)
         {
           readRecord(i, overflowFile);
           int idFound = id - this.tempId;
@@ -241,10 +255,28 @@ public class DB {
         return false;
       }
     }
-    boolean recordRead = readRecord(recordId, this.dataFile);
-    if(recordRead)
+    String fileToRead;
+    if(this.isOverflow == true)
     {
-      System.out.println("\nData for Record #" + recordId + "\n-------------------\n" +
+      fileToRead = this.overflowFile;
+      System.out.print("Successfully read file!");
+    }
+    else
+    {
+      fileToRead = this.dataFile;
+    }
+    boolean recordRead = readRecord(recordId, fileToRead);
+    if(recordRead && !this.isOverflow)
+    {
+      int printRecordId = recordId + 1; //Printing records starting at #1
+      System.out.println("\nData for Record #" + printRecordId + "\n-------------------\n" +
+      "ID: " + this.tempId + "\nState: " + this.tempState + "\nCity: " + this.tempCity + "\nName: " + this.tempName + "\n");
+      return true;
+    }
+    else if(recordRead && this.isOverflow)
+    {
+      int printOverflowId = recordId + NUM_RECORDS + 1;
+      System.out.println("\nData for Record #" + printOverflowId + " found in the overflow file.\n-------------------\n" +
       "ID: " + this.tempId + "\nState: " + this.tempState + "\nCity: " + this.tempCity + "\nName: " + this.tempName + "\n");
       return true;
     }
@@ -313,6 +345,7 @@ public class DB {
     return true;
   }
 
+  //Appends a record to the end of the overflow file.
   public Boolean addRecord(int id, String state, String city, String name)
   {
     if(!this.isOpen)
@@ -328,7 +361,7 @@ public class DB {
       return false;
     }
     byte[] bytesToWrite = new byte[RECORD_SIZE - 1];
-    int overflowNum = num_overflow + 1;
+    int overflowNum = this.num_overflow + 1;
     String recordString = overflowNum + "," + id + "," + state + "," + city + "," + name + ","; 
     try{
       byte[] recordBytes = recordString.getBytes("UTF8");
@@ -347,7 +380,7 @@ public class DB {
       byte[] newlineBytes = newline.getBytes();
       overflow.write(bytesToWrite);
       overflow.write(newlineBytes);
-      num_overflow++;
+      this.num_overflow++;
     }
     catch(IOException e)
     {
@@ -401,6 +434,43 @@ public class DB {
     return true;
   }
 
+  //Finds a record by id then deletes it
+  public Boolean deleteRecord(int id)
+  {
+    if(!this.isOpen)
+    {
+      System.out.println("A database is not open");
+      return false;
+    }
+    Boolean foundRecordToDelete = findRecord(id);
+    if(!foundRecordToDelete)
+    {
+      return false;
+    }
+    System.out.println("Please enter 'Y' or 'N' to confirm if this is the record you want to delete.");
+    String deleteInput = inputScanner.nextLine();
+    switch(deleteInput.toLowerCase())
+    {
+      case "y":
+        boolean deletedSucces = overwriteRecord("", "", "");
+        if(deletedSucces)
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      case "n":
+        System.out.println("Returning to menu...");
+        return false;
+      default:
+        System.out.println("Not a valid input.");
+        return false;
+    }
+
+  }
+
   /**
    * Binary Search by record id
    * 
@@ -434,4 +504,3 @@ public class DB {
       return -1;
   }
 }
-  
