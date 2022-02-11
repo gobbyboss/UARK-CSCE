@@ -83,8 +83,8 @@ public class Menu {
               RandomAccessFile data = new RandomAccessFile(dataFile, "rw");
               RandomAccessFile config = new RandomAccessFile(configFile, "rw");
               RandomAccessFile overflow = new RandomAccessFile(overflowFile, "rw");
-              b.open(rawFile);
-              
+              b.open(rawFile, false);
+   
               int rowCount = 0;
               int recordNum = 1;
 
@@ -92,17 +92,18 @@ public class Menu {
               for(int i = 0; i < DB.NUM_RECORDS; i++)
               {
                 String[] fieldData = readLine(csvFile, rowCount);
-                b.writeRecord(recordNum, Integer.parseInt(fieldData[0]), fieldData[1], fieldData[2], fieldData[3]);
+                String nameWithoutSpaces = fieldData[3].replace("_", " ");
+                b.writeRecord(recordNum, Integer.parseInt(fieldData[0]), fieldData[1], fieldData[2], nameWithoutSpaces);
                 recordNum++;
                 rowCount++;
               }
 
               //Writes metadata after generating .data file
-              String numRecordsString = "num_records=" + --recordNum + "\n";
-              String overflowString = "num_overflow=0";
-              byte[] bytesToWrite = numRecordsString.getBytes();
+              String numRecordsString = "num_records=" + --recordNum;
+              String overflowString = "num_overflow=0\n";
+              byte[] bytesToWrite = overflowString.getBytes();
               config.write(bytesToWrite);
-              bytesToWrite = overflowString.getBytes();
+              bytesToWrite = numRecordsString.getBytes();
               config.write(bytesToWrite);
               
               data.close();
@@ -110,10 +111,10 @@ public class Menu {
               overflow.close();
               b.close();
 
-              System.out.println("Database created successfully!\n");
+              System.out.println("\nDatabase created successfully!\n");
             }
             catch(FileNotFoundException e){
-              System.out.println("File not found.\n");
+              System.out.println("\nFile not found.\n");
             }
             catch(IOException e)
             {
@@ -124,11 +125,11 @@ public class Menu {
           {
             if(!csvExists)
             {
-              System.out.println("The .csv file was not found.\n");
+              System.out.println("\nThe .csv file was not found.\n");
             }
             if(databaseExists)
             {
-             System.out.println("This database already exists.\n");
+             System.out.println("\nThis database already exists.\n");
             }
           }
           break;
@@ -136,15 +137,15 @@ public class Menu {
         case "2":
           System.out.print("Please enter the prefix of the database to open: ");
           String filename = b.inputScanner.nextLine();
-          boolean success = b.open(filename);
-          if(success) System.out.println("Database opened successfully!\n");
+          boolean success = b.open(filename, true);
+          if(success) System.out.println("\nDatabase opened successfully!\n");
           break;
         //Closes the DB
         case "3":
           boolean isOpened = b.isOpen();
           if(!isOpened)
           {
-            System.out.println("There are no active databases curerntly.\n");
+            System.out.println("\nThere are no active databases curerntly.\n");
             break;
           }
           b.close();
@@ -154,7 +155,7 @@ public class Menu {
         case "4":
           if(!b.isOpen())
           {
-            System.out.println("A database is not open\n");
+            System.out.println("\nThere are no active databases curerntly.\n");
             break;
           }
           System.out.print("Please input the ID of the record you would like to display: ");
@@ -182,17 +183,90 @@ public class Menu {
           break;
         //Prints report
         case "6":
+          if(!b.isOpen())
+          {
+            System.out.println("\nThere are no active databases curerntly.\n");
+            break;
+          }
+          System.out.println("\n*********************************************\n* Generating report for first 10 records... *"
+          + "\n*********************************************\n");
+          for(int i = 0; i < 10; i++)
+          {
+            boolean reportSuccess = b.readRecord(i, b.getDataFile());
+            if(reportSuccess)
+            {
+              int record = i + 1;
+              System.out.println("Record #" + record + "\n----------\nID: " + b.tempId + "\nState: " + b.tempState +
+              "\nCity: " + b.tempCity + "\nName: " + b.tempName + "\n\n----------------------------------\n");
+            }
+            else
+            {
+              break;
+            }
+          }
           break;
         //Adds record
         case "7":
+          if(!b.isOpen())
+          {
+            System.out.println("\nThere are no active databases curerntly.\n");
+            break;
+          }
+          System.out.print("To add a new record, enter your data for each field prompted.\nID: ");
+          int addId;
+          String inputId, addState, addCity, addName;
+          
+          inputId = b.inputScanner.nextLine();
+          try{
+            addId = Integer.parseInt(inputId);
+          }catch(NumberFormatException e)
+          {
+            System.out.println("Not a valid input, please input an integer.");
+            break;
+          } 
+          System.out.print("\nState: ");
+          addState = b.inputScanner.nextLine();
+          System.out.print("\nCity: ");
+          addCity = b.inputScanner.nextLine();
+          System.out.print("\nName: ");
+          addName = b.inputScanner.nextLine();
+          boolean addSuccess = b.addRecord(addId, addState, addCity, addName);
+          if(!addSuccess)
+          {
+            System.out.println("Failed to add record");
+            break;
+          }
+          System.out.println("Successfully added record!");
           break;
         //Deletes record
         case "8":
+          if(!b.isOpen())
+          {
+            System.out.println("\nThere are no active databases curerntly.\n");
+            break;
+          }
+          System.out.print("Please enter the id of the record you want to delete: ");
+          String deleteInput = b.inputScanner.nextLine();
+          int deleteId = 0;
+          try{
+            deleteId = Integer.parseInt(deleteInput);
+          }catch(NumberFormatException e){
+            System.out.println("Sorry that is not a valid input\n");
+            break;
+          }
+          Boolean deleteSuccess = b.deleteRecord(deleteId);
+          if(deleteSuccess)
+          {
+            System.out.println("Successfully deleted record!");
+            break;
+          }
+          System.out.println("Failed to delete record.");
           break;
         //Exits
         case "9":
           System.out.println("Exiting now...");
           b.inputScanner.close();
+          b.close();
           System.exit(0);
         default:
           System.out.println("That is not a valid input. Please enter an integer between 1-9");
