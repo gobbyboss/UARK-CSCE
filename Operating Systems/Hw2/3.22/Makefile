@@ -1,2 +1,2 @@
 all:
-	gcc collatz.c -o collatz.exe
+	gcc collatz.c -o collatz.exe -lrt
