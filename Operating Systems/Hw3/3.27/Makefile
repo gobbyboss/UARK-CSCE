@@ -1,2 +1,2 @@
 all:
-	gcc filecopy.c -o filecopy.exe
+	gcc filecopy.c -o filecopy
