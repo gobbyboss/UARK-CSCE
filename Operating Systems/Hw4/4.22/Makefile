@@ -1,2 +1,2 @@
 all:
-	gcc parallel-pi.c -o parallel-pi
+	gcc parallel-pi.c -pthread -lm -o parallel-pi

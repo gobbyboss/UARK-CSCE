@@ -1,2 +1,2 @@
 all:
-	gcc stats.c -o stats
+	gcc stats.c -pthread -o stats
