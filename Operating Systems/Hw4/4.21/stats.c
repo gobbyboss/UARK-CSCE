@@ -72,12 +72,9 @@ int main(int argc, char *argv[])
         pthread_join(tid[i], NULL);
     }
 
-    printf("%s", "Average: ");
-    printf("%f\n", AVERAGE);
-    printf("%s", "Maximum: ");
-    printf("%d\n", MAXIMUM);
-    printf("%s", "Minimum: ");
-    printf("%d\n", MINIMUM);
+    printf("Average: %f\n", AVERAGE);
+    printf("Maximum: %d\n", MAXIMUM);
+    printf("Minimum: %d\n", MINIMUM);
 
     return 0;
 }
