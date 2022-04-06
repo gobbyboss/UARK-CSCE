@@ -67,11 +67,11 @@ Please select an option:\n
         sName = []
         iName = []
         quantity = []
-        for SUPPLIER_ID in cursor:
-            sId.append(SUPPLIER_ID[0])
-            sName.append(SUPPLIER_ID[1])
-            iName.append(SUPPLIER_ID[2])
-            quantity.append(SUPPLIER_ID[3])
+        for capture in cursor:
+            sId.append(capture[0])
+            sName.append(capture[1])
+            iName.append(capture[2])
+            quantity.append(capture[3])
 
         print("\n==========================\n   Printing Results.....      \n==========================")
         for x in range(len(sId)):
@@ -177,7 +177,56 @@ Please select an option:\n
         print("Option 3")
     
     if(menu == 4):
-        print("Option 4")
+        #Choosing supplier in case of duplicate item
+        print('Please select the supplier ID for the item you want to update\n-----------------------------------------------------------------')
+        query = ('SELECT ID, NAME FROM SUPPLIER')
+        cursor.execute(query)
+        idArray = []
+        nameArray = []
+        for capture in cursor:
+            idArray.append(capture[0])
+            nameArray.append(capture[1])
+
+        for x in range(len(idArray)):
+            print('ID) ' + str(idArray[x]) + ', Supplier Name) ' + str(nameArray[x]) + '\n')
+
+        supplierId = input()
+        found = False
+        while found == False:
+            for x in range(len(idArray)):
+                if str(idArray[x]) == supplierId:
+                    found = True 
+
+            if found:
+                query = ('SELECT i.NAME FROM ITEM i, SUPPLIER s WHERE s.ID = i.SUPPLIER_ID AND s.ID = ' + supplierId)
+                cursor.execute(query)
+                itemArray = []
+                for capture in cursor:
+                    itemArray.append(capture[0])
+                for x in range(len(itemArray)):
+                    print('Item ' + str(x + 1) + ') ' + str(itemArray[x]))
+                print('Please enter the name of an item to update: ')
+
+            else:
+                print('Supplier not found. Please try again')
+                supplierId = input()
+        #Updating item
+        teaName = input()
+        while(len(teaName) < 1 or len(teaName) > 49):
+            print('Invalid input, please try again.')
+            teaName = input()
+        query = ('SELECT i.QUANTITY AS q, s.NAME AS name FROM ITEM i, SUPPLIER s WHERE s.ID = ' + supplierId + ' AND i.NAME = \'' + teaName + '\'')
+        cursor.execute(query)
+        quantity = -1
+        for q in cursor:
+            quantity = q[0]
+
+        if quantity == -1:
+            print('Tea was not found. Returning...')
+        else:
+            print('\nItem successfully found!\n------------------------')
+            print('Item: ' + teaName + '\nQuantity: ' + str(quantity))
+            
 
 print("Exiting database...")
 cnx.close()
