@@ -18,7 +18,7 @@ cnx = mysql.connector.connect(user='rwgoss', password='Ce9cingo',
 cursor = cnx.cursor()
 menu = 0
 
-print("Robert Goss DB Hw4\n=================================\n")
+print("\nRobert Goss DB Hw4\n=================================")
 while menu != 5:
     print('''
 Please select an option:\n
@@ -178,7 +178,7 @@ Please select an option:\n
     
     if(menu == 4):
         #Choosing supplier in case of duplicate item
-        print('Please select the supplier ID for the item you want to update\n-----------------------------------------------------------------')
+        print('\nPlease select the supplier ID for the item you want to update\n-----------------------------------------------------------------')
         query = ('SELECT ID, NAME FROM SUPPLIER')
         cursor.execute(query)
         idArray = []
@@ -191,20 +191,23 @@ Please select an option:\n
             print('ID) ' + str(idArray[x]) + ', Supplier Name) ' + str(nameArray[x]) + '\n')
 
         supplierId = input()
+        supplierName = ''
         found = False
         while found == False:
             for x in range(len(idArray)):
                 if str(idArray[x]) == supplierId:
+                    supplierName = nameArray[x]
                     found = True 
 
             if found:
+                print('\nItems for supplier ' + supplierName + '\n------------------------------------\n')
                 query = ('SELECT i.NAME FROM ITEM i, SUPPLIER s WHERE s.ID = i.SUPPLIER_ID AND s.ID = ' + supplierId)
                 cursor.execute(query)
                 itemArray = []
                 for capture in cursor:
                     itemArray.append(capture[0])
                 for x in range(len(itemArray)):
-                    print('Item ' + str(x + 1) + ') ' + str(itemArray[x]))
+                    print('Item ' + str(x + 1) + ') ' + str(itemArray[x]) + '\n')
                 print('Please enter the name of an item to update: ')
 
             else:
@@ -226,6 +229,29 @@ Please select an option:\n
         else:
             print('\nItem successfully found!\n------------------------')
             print('Item: ' + teaName + '\nQuantity: ' + str(quantity))
+            print('Please enter the new quantity of the item: ')
+            newQuantity = input()
+            escape = False
+            while escape == False:
+                escape = True
+                if(newQuantity.isnumeric() == False):
+                    print('Please enter an integer')
+                    newQuantity = input()
+                    escape = False
+                if(int(newQuantity) < 0):
+                    print('Quantity cannot be less than 0. Please try again')
+                    newQuantity = input()
+                    escape = False
+                if(int(newQuantity) < quantity):
+                    print('Warning: A higher quantity than the previous is expected. Would you like to try again? If so enter "Y"')
+                    checkInput = input()
+                    if (checkInput == 'Y' or checkInput == 'y'):
+                        print('Please enter the new quantity')
+                        newQuantity = input()
+                        escape = False
+            query = ('UPDATE ITEM SET QUANTITY = ' + newQuantity + ' WHERE NAME = \'' + teaName + '\' AND SUPPLIER_ID = ' + supplierId)
+            cursor.execute(query)
+            print('Successfully updated!')
             
 
 print("Exiting database...")
