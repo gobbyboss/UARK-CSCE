@@ -174,7 +174,18 @@ Please select an option:\n
             
 
     if(menu == 3):
-        print("Option 3")
+        print('Are you sure you want to close the day? Type "Yes" to continue')
+        confirmation = input()
+        if confirmation.lower() == 'yes':
+            query = ('UPDATE SALES SET GRATUITY = TOTAL * .15, UPDATED_AT = NOW()')
+            cursor.execute(query)
+            query = ('UPDATE SALES SET TOTAL = TOTAL - GRATUITY')
+            cursor.execute(query)
+
+
+        else:
+            print('Returning...')
+        
     
     if(menu == 4):
         #Choosing supplier in case of duplicate item
