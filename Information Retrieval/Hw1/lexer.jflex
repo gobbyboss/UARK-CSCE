@@ -1,3 +1,5 @@
+//  Robert Goss Information Retrieval Hw1 Part 2
+//  9/2/2022
 import java.io.*;
 
 %%
@@ -14,7 +16,6 @@ import java.io.*;
 %%
 
 
-[\r\t]  { }
 [\n]    { return yytext(); }
 .		{ return yytext(); }
 <<EOF>> { return null; }

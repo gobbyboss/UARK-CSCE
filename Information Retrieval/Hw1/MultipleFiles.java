@@ -1,3 +1,5 @@
+//  Robert Goss Information Retrieval Hw1 Part 2
+//  9/2/2022
 // -----------------------------------------------------------------
 //  Filename: MultipleFiles.java
 // 	Have a separate jflex file to do tokenization named: lexer.jflex
