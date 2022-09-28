@@ -80,23 +80,23 @@ EMAIL 	=		[A-Za-z0-9_\-\.]+@([A-Za-z0-9_\-]+\.)+[A-Za-z0-9_\-]{2,4}
                 {
                     printString += endString;
                 }
-                System.out.println(printString.toLowerCase());
+                return printString.toLowerCase();
  }
 
 /* Emails */
-{EMAIL} { System.out.println(yytext().toLowerCase()); }
+{EMAIL} { return yytext().toLowerCase(); }
 
 /* Finds and keeps URLs */
 https?:\/\/(www\.)?[a-zA-Z0-9-]{1,128}\.[a-zA-Z0-9()]{1,4}\.? { return yytext(); }
 
 /* Find floats and remove the decimal portion */
--?\d*\.\d+ { float f = Float.parseFloat(yytext()); System.out.println((int)f); }
+-?\d*\.\d+ { float f = Float.parseFloat(yytext()); int returnInt = (int)f; return String.valueOf(returnInt); }
 
 /* Remove Punctuation */
 [.,:;?()[]\"\'!_/-] { }
 
 /* Rule for finding words */
-[\w]+ { System.out.println(yytext().toLowerCase()); }
+[\w]+ { return yytext().toLowerCase(); }
 
 /* Ignore all formatting */
 [\n\s\t\r]+  { }

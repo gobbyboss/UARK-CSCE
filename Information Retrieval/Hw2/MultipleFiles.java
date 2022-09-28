@@ -9,6 +9,7 @@
 // -----------------------------------------------------------------
 
 import java.io.*;
+import java.util.*;
 
 public class MultipleFiles {
 	public static void main (String args[])
@@ -58,7 +59,13 @@ public class MultipleFiles {
 					Lexer lexer = new Lexer(rdr);				
 					String result = "";
 					String token = "";
-					
+
+					//Document Hashtable and token counters
+					int uniqueTokens = 0;
+					int docTokens = 0;
+
+					Hashtable<String, Integer> localHash = new Hashtable<>(18);
+
 					while(token != null)
 					{
 						result = lexer.yylex();
@@ -66,16 +73,26 @@ public class MultipleFiles {
 						// then we'll output it to the file
 						// otherwise we know we're at the end of the file
 						if(result != null) {
-							System.out.print(result);
+							System.out.println(result);
+							try{
+								int freq = localHash.get(result);
+								localHash.put(result, ++freq);
+							}
+							catch(NullPointerException e)
+							{
+								localHash.put(result, 1);
+								uniqueTokens++;
+							}	
 							++totalTokens;
+							++docTokens;
 						}
 						else
 							token = result;
 						
 					}
 					o.close();
-
-					processDocumentHashtable();
+					System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+					processDocumentHashtable(outFile, uniqueTokens, docTokens);
 				}
 			}
 
@@ -94,9 +111,8 @@ public class MultipleFiles {
 		}
 	}
 
-	public static void processDocumentHashtable() {
-		System.out.println("Document hashtable should have been filled.");
-		System.out.println("Time to deal with its contents.");
+	public static void processDocumentHashtable(String filename, int uniqueTokens, int docTokens) {
+		System.out.println("Filename: " + filename + ".  Unique Tokens: " + uniqueTokens + ".  Total Tokens: " + docTokens + ".");
 	}
    
 }
