@@ -73,7 +73,9 @@ public class MultipleFiles {
 						// then we'll output it to the file
 						// otherwise we know we're at the end of the file
 						if(result != null) {
+							//Tokenize by printing to output file
 							System.out.println(result);
+							//Inserts or updates document hashtable and counters with token
 							try{
 								int freq = localHash.get(result);
 								localHash.put(result, ++freq);
@@ -91,6 +93,7 @@ public class MultipleFiles {
 						
 					}
 					o.close();
+					//Set printstream back to console and process document hash stats
 					System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
 					processDocumentHashtable(outFile, uniqueTokens, docTokens);
 				}
@@ -99,7 +102,7 @@ public class MultipleFiles {
 			System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
 			System.out.println("Total Tokens: " + totalTokens);
 
-			System.out.println("Done tokenizing.  Good place to write the dict and post files.");
+			System.out.println("Done tokenizing.");
 
 		}
 		catch (Exception e)
