@@ -77,8 +77,8 @@ public class MultipleFiles {
 							System.out.println(result);
 							//Inserts or updates document hashtable and counters with token
 							try{
-								int freq = localHash.get(result);
-								localHash.put(result, ++freq);
+								int numDocs = localHash.get(result);
+								localHash.put(result, ++numDocs);
 							}
 							catch(NullPointerException e)
 							{
