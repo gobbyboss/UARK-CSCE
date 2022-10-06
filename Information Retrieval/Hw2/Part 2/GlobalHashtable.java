@@ -197,9 +197,7 @@ public class GlobalHashtable {
                     
                     System.setOut(postStream);
                     DataNode head = GlobalHashtable[i].getHead();
-                    System.out.print(head.getDocId() + " " + head.getFreq() + "\n");
-                    postLines++;
-                    while(head.next != null)
+                    while(head != null)
                     {
                         System.out.print(head.getDocId() + " " + head.getFreq() + "\n");
                         head = head.next;
