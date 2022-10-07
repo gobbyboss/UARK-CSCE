@@ -10,7 +10,4 @@ echo 'indexing'
 /bin/rm out/*
 java MultipleFiles $1 $2
 
-echo
-echo '-------- results --------'
-ls -lt $2
-more $2/*
+

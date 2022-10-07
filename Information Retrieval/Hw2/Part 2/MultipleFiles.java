@@ -9,7 +9,7 @@
 // -----------------------------------------------------------------
 
 import java.io.*;
-import java.util.Arrays;
+
 
 public class MultipleFiles {
 	public static void main (String args[])
@@ -17,7 +17,7 @@ public class MultipleFiles {
 		File  inputDir = null;
 		File  outputDir = null;
 		PrintStream console = System.out;
-        Hashtable docHt = new Hashtable(15);
+        Hashtable docHt = new Hashtable(3000);
         int docTokens = 0;
          
 		try
@@ -42,13 +42,12 @@ public class MultipleFiles {
 			}
 			
 			File[] listOfInputs = inputDir.listFiles(); // Array of Files (documents we will tokenize and index)
-			Arrays.sort(listOfInputs);
-			GlobalHashtable globalHash = new GlobalHashtable(7); //Global Hashtable Init
+			GlobalHashtable globalHash = new GlobalHashtable(35000); //Global Hashtable Init
 			int docId = 0; //Increments on each file
 			int totalTokens = 0;
 			
 			//Create reader for map
-			String outFile = "map.txt";
+			String outFile = "map.html";
 			PrintStream o = new PrintStream(new File(outputDir, outFile));
 			for(File file : listOfInputs) //loop through all files in input directory
 			{

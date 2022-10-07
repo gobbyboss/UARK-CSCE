@@ -34,7 +34,7 @@ public class GlobalHashtable {
 		
 		//initialize the GlobalHashtable
         for(int i=0;i<this.size;i++)
-            GlobalHashtable[i]=new Node("",0,null);
+            GlobalHashtable[i]=new Node("",0,null,null);
     }
     
     /**
@@ -120,18 +120,16 @@ public class GlobalHashtable {
         {
             GlobalHashtable[index].setKey(key);
             GlobalHashtable[index].setHead(newNode);
+            GlobalHashtable[index].setTail(newNode);
             used++;
         }
         else
         {
-            DataNode head = GlobalHashtable[index].getHead();
-            while(head.next != null)
-            {
-                head = head.next;
-            }
-            head.next = newNode;
+            DataNode tail = GlobalHashtable[index].getTail();
+            tail.next = newNode;
+            GlobalHashtable[index].setTail(newNode);
         }
-        //increment the numDocsuency
+        //increment the numDocs
 		int temp = GlobalHashtable[index].getNumDocs() + 1;
         GlobalHashtable[index].setNumDocs(temp);
     }
@@ -177,10 +175,10 @@ public class GlobalHashtable {
     {
         try{
             //Create streams for dict and post files
-            String postFile = "post.txt";
+            String postFile = "post.html";
             PrintStream postStream = new PrintStream(new File(outputDir, postFile));
 
-            String dictFile = "dict.txt";
+            String dictFile = "dict.html";
             PrintStream dictStream = new PrintStream(new File(outputDir, dictFile));
 
             //Counts line numbers in Post file
@@ -293,13 +291,14 @@ public class GlobalHashtable {
     {
         private String key;
         private int numDocs;
-        private DataNode head;
+        private DataNode head, tail;
         
-        public Node(String key,int numDocs, DataNode head)
+        public Node(String key,int numDocs, DataNode head, DataNode tail)
         {
             this.key=key;
             this.numDocs=numDocs;
             this.head=head;
+            this.tail=tail;
         }
         
         public String getKey()
@@ -316,6 +315,11 @@ public class GlobalHashtable {
         {
             return head;
         }
+
+        public DataNode getTail()
+        {
+            return tail;
+        }
         
         public void setKey(String key)
         {
@@ -330,6 +334,11 @@ public class GlobalHashtable {
         public void setHead(DataNode head)
         {
             this.head=head;
+        }
+
+        public void setTail(DataNode tail)
+        {
+            this.tail=tail;
         }
     }
 
