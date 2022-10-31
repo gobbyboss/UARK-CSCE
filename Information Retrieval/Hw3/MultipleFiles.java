@@ -17,8 +17,8 @@ public class MultipleFiles {
 		File  inputDir = null;
 		File  outputDir = null;
 		PrintStream console = System.out;
-        Hashtable docHt = new Hashtable(3000);
-		StopHashtable stopHt = new StopHashtable(500);
+        DocumentHashtable docHt = new DocumentHashtable(3000);
+		StopHashtable stopHt = new StopHashtable(102);
         int docTokens = 0;
 
 		try
@@ -43,7 +43,7 @@ public class MultipleFiles {
 			}
 			
 			File[] listOfInputs = inputDir.listFiles(); // Array of Files (documents we will tokenize and index)
-			GlobalHashtable globalHash = new GlobalHashtable(45000); //Global Hashtable Init
+			GlobalHashtable globalHash = new GlobalHashtable(24000); //Global Hashtable Init
 			int docId = 0; //Increments on each file
 			int totalTokens = 0;
 			
@@ -61,7 +61,6 @@ public class MultipleFiles {
 					System.setOut(console);
 					//Set the reader to the next file in the input directory
 					Reader rdr = new InputStreamReader(new FileInputStream(file));
-                    System.out.println ("\nProcessing file " + file.getName());
 				
 					Lexer lexer = new Lexer(rdr);				
 					String result = "";
@@ -73,7 +72,7 @@ public class MultipleFiles {
 						// For each token come back if it's not null
 						// then we'll add it to the document hashtable
 						// otherwise we know we're at the end of the file
-						if(result != null && result.length() > 1 && stopHt.find(result) != 0) {
+						if(result != null && result.length() > 1 && !stopHt.isStopWord(result)) {
                             docHt.insert(result);
                             docTokens++;
 							totalTokens++;
@@ -88,10 +87,6 @@ public class MultipleFiles {
 						double rtf = docHt.getFreq(key) / totalTokens;
 						globalHash.insert(key, docId, rtf);
 					}
-				
-			        System.out.println("The document contained " + docHt.getUsed() + " unique tokens and "
-                                       + docTokens + " total tokens.");
-                    
                     // Finished using the document hashtable, reset it
                     docHt.init();
                     docTokens = 0;
@@ -99,8 +94,10 @@ public class MultipleFiles {
 				}
 			}
 			//Process the global hashtable into dict/post using docId as the number of documents
-			System.out.println("\nThe corpus contained " + totalTokens + " total tokens.");
+			System.out.println("\nThe corpus contained " + totalTokens + " total tokens in " + docId + " documents.");
 			globalHash.processGlobalHash(outputDir, docId);
+			System.setOut(console);
+			System.out.println("Successfully created inverted file!");
 		}
 		catch (Exception e)
 		{

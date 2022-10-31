@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.RandomAccessFile;
 
 public class StopHashtable 
 {
@@ -59,6 +60,29 @@ public class StopHashtable
 		//initialize the hashtable
         for(int i=0;i<this.size;i++)
             hashtable[i]=new Node("");
+
+        readStopList();
+    }
+    //Iterates through stoplist.txt and inserts each word line by line into the hashtable
+    public void readStopList()
+    {
+      try{
+        RandomAccessFile stopfile = new RandomAccessFile("stoplist.txt", "r");
+        String word = stopfile.readLine();
+        int index = 0;
+        while(word != null)
+        {
+            Node node = getNode(index);
+            node.setKey(word);
+            word = stopfile.readLine();
+            index++;
+        }
+        stopfile.close();
+      }
+      catch(Exception e)
+      {
+        System.out.println(e.toString());
+      }
     }
     
     /**
@@ -122,22 +146,7 @@ public class StopHashtable
     }
     
     /**
-     * Insert string key, and string freq into hashtable, hashes on key.
-     * @param key String to be hashed.
-     * @param freq String
-     */
-    public void insert(String key)
-    {
-        int index = find(key);
-        
-		//if not already in the table, insert it
-        if(!hashtable[index].getKey().equals(""))
-        {
-            hashtable[index].setKey(key);
-            used++;
-        }
-    }
-    
+
     /**
      * Returns the index of the word in the table, or the index of a free space
      * in the table.
@@ -175,6 +184,18 @@ public class StopHashtable
         return index2;
     }
     
+    public boolean isStopWord(String str)
+    {
+ 
+       for(int i = 0; i < size; i++)
+       {
+            if(!hashtable[i].getKey().equals("") && hashtable[i].getKey().equals(str))
+            {
+                return true;
+            }
+       }
+       return false;
+    }
     /**
      * Get the three statistics as a string.  Used, Collisions, and Lookups.
      * @return Used, Collisions, and Lookups as a string.

@@ -240,7 +240,7 @@ public class GlobalHashtable {
 
     public String createPostString(int docId, double weight)
     {
-        int recordSize = 20;
+        int recordSize = 18;
         String record = docId + " " + weight;
         record = fillSpace(record.getBytes(), recordSize - 1) + "\n";
         return record;
