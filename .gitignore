@@ -1,7 +1,11 @@
 .DS_Store
-Information Retrieval/Hw1/testfiles/hard.html
-Information Retrieval/Hw1/testfiles/medium.html
-Information Retrieval/Hw1/testfiles/simple.html
-Information Retrieval/Hw3/dict.html
-Information Retrieval/Hw3/out/post.html
-Information Retrieval/Hw3/out/map.html
+Information Retrieval/Hw1/testfiles
+Information Retrieval/Hw2/Part 1/testfiles
+Information Retrieval/Hw2/Part 2/in
+Information Retrieval/Hw2/Part 2/out
+Information Retrieval/Hw3/in
+Information Retrieval/Hw3/out
+Information Retrieval/Hw4/in
+Information Retrieval/Hw4/out
+Information Retrieval/Hw4/tiny
+Information Retrieval/Hw4/tinyout
