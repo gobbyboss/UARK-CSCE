@@ -10,8 +10,7 @@
         </form></table>
     <?php
     echo "<h2>Search Query: " . $_POST[search] . "</h2>";
-    <br>
-    echo exec("java Retrieve out $_POST[search]");
+    echo exec("./retrieve $_POST[search] out");
     ?>
 </body>
 </html>
